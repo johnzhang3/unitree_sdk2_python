@@ -8,6 +8,8 @@ from unitree_sdk2py.idl.unitree_go.msg.dds_ import LowCmd_
 from unitree_sdk2py.utils.crc import CRC
 from unitree_sdk2py.utils.thread import Thread
 import unitree_legged_const as go2
+from unitree_sdk2py.go2.robot_state.robot_state_client import RobotStateClient
+
 
 crc = CRC()
 
@@ -17,6 +19,15 @@ if __name__ == '__main__':
         ChannelFactoryInitialize(0, sys.argv[1])
     else:
         ChannelFactoryInitialize(0)
+    rsc = RobotStateClient()
+    rsc.SetTimeout(3.0)
+    rsc.Init()
+    code = rsc.ServiceSwitch("sport_mode", False)    
+    if code != 0:
+        print("service stop sport_mode error. code:", code)
+    else:
+        print("service stop sport_mode success. code:", code)
+    # rsc.ServiceList()
     # Create a publisher to publish the data defined in UserData class
     pub = ChannelPublisher("rt/lowcmd", LowCmd_)
     pub.Init()
